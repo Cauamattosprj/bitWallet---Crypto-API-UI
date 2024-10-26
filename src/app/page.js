@@ -1,101 +1,104 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import Navbar from './components/Navbar';
+import ChartData from './components/ChartData'
+
+const API_URL = 'https://api.coingecko.com/api/v3/coins/';
+const API_KEY = 'x_cg_api_key=CG-M6yKaLiG8FNb7dLWscBK5Kgb';
+
+
+export default function App() {
+
+
+  // puxar os dados da API
+  const [crypto, setCrypto] = useState([]);
+
+  useEffect(() => {
+    cryptoData('bitcoin')
+  }, [])
+
+  const cryptoData = async (crypto_name) => {
+    try {
+      const response = await fetch(`${API_URL}${crypto_name}?${API_KEY}`);
+      const data = await response.json();
+      setCrypto(data);
+    } catch (error) {
+      console.error('Erro ao buscar dados: ', error);
+    }
+  }
+
+  // definir variáveis a partir dos dados:
+  const name = crypto.name
+  const current_price = crypto.market_data?.current_price?.brl
+  const image = crypto.image?.large
+  const price_change_percentage_24h = crypto.market_data?.price_change_percentage_24h
+  const price_change_percentage_30d = crypto.market_data?.price_change_percentage_30d
+
+  {
+  //     const c = document.getElementById("myCanvas");
+  // const ctx = c.getContext("2d");
+
+  // // Create linear gradient
+  // const grad=ctx.createLinearGradient(0,0, 280,0);
+  // grad.addColorStop(0, "lightblue");
+  // grad.addColorStop(1, "darkblue");
+
+  // // Fill rectangle with gradient
+  // ctx.fillStyle = grad;
+  // ctx.fillRect(10,10, 280,130);
+  }
+  
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <>
+    
+    {/* header */}
+    <Navbar />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    {/* informações */}
+    <div className="p-6 text-slate-700">
+    <div className="crypto-card flex flex-col gap-4 p-6 w-[350px] mx-auto bg-[#dbdfe7] rounded-md shadow-lg hover:bg-slate-200 transition-all duration-300">
+      <div className="flex">
+        <img 
+          className="h-12 w-12 mr-4" 
+          src={image} 
+          alt="Crypto Image" 
+        />
+        <div className="flex-1">
+          <p>
+            <strong>Moeda</strong>: {name}
+          </p>
+          <div>
+            <p>
+              <strong>Valor:</strong>  {current_price}
+            </p> 
+            <div className="flex items-center">
+              <p className="mr-2">
+                <strong>Variação (24h):</strong>
+              </p>
+              {
+                price_change_percentage_24h > 0 ? (
+                  <div className="text-green-500">
+                    {price_change_percentage_24h}%
+                  </div>
+                ) : (
+                  <p className="text-red-500">
+                    {price_change_percentage_24h}%
+                  </p>
+                )
+              }
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      <div className="w-full">
+        <ChartData />
+      </div>
     </div>
-  );
+  </div>
+
+    </>
+    
+  )
 }
